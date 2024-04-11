@@ -10,7 +10,7 @@ public class ControlerPersonnage : MonoBehaviour
     public float vitesseY; //vitesse verticale 
     public float vitesseSaut; //vitesse de saut désirée
 
-    public bool attaque = false; //variable pour l'attaque
+    public bool attaquePossible; //variable pour l'attaque
 
     // Déclaration de la variable public de l’objet son
     public AudioClip sonMort;
@@ -18,6 +18,15 @@ public class ControlerPersonnage : MonoBehaviour
     AudioSource sourceAudio; //Audio
 
     public bool partieTerminee; // variable pour la fin de la partie
+
+    // Fonction qui s’exécute au début de la partie
+    void Start()
+    {
+        sourceAudio = GetComponent<AudioSource>(); //Initialise le composant audio
+        partieTerminee = false; //Initialise la variable partieTerminee
+        attaquePossible = true; //Initialise la variable attaquePossible
+
+    }
 
 
     //Détection des touches du clavier et modification des vitesses en conséquence
@@ -47,7 +56,7 @@ public class ControlerPersonnage : MonoBehaviour
         // sauter l'objet à l'aide de la touche "w"
         if (Input.GetKeyDown("w") && Physics2D.OverlapCircle(transform.position, 0.5f))
         {
-            vitesseY = vitesseSaut;
+            vitesseY = 30f;
             GetComponent<Animator>().SetBool("saute", true);
         }
         else
@@ -72,14 +81,21 @@ public class ControlerPersonnage : MonoBehaviour
         }
            
         //Gestion de l'attaque
-        if (Input.GetKeyDown(KeyCode.Space) && attaque == false)
+        if (Input.GetKeyDown(KeyCode.Space) && attaquePossible == true && GetComponent<Animator>().GetBool("saute") == false)
         {
-            attaque = true;
+            GetComponent<Animator>().SetBool("attaque", true);
+            attaquePossible = false;
             Invoke("AnnuleAttaque", 0.4f);
-            
+        } else
+        {
+            GetComponent<Animator>().SetBool("attaque", false);
         }
-       
-       
+        if (attaquePossible == false && vitesseX <= vitesseXMax)
+        {
+            vitesseX = vitesseX + 5f;
+        }
+
+
     }
 
 
@@ -109,14 +125,43 @@ public class ControlerPersonnage : MonoBehaviour
             //Déclenche son de mort
             sourceAudio.PlayOneShot(sonMort, 1f); //Joue le clip qui se trouve dans la variable sonMort
 
+            //Partie terminée enregistrée
+            partieTerminee = true;
+
             //Fin de la partie, reload la scene
             Invoke ("Recommencer", 2f);
+        }
+
+        //Activation de l'animation mort au contact avec un ennemi
+        if (collision.gameObject.name == "Abeille")
+        {
+            GetComponent<Animator>().SetBool("mort", true);
+            GetComponent<Animator>().SetBool("explosion", true);
+
+            //Désactive les contrôles du personnage lorsqu'il est mort
+            if (transform.position.x > collision.transform.position.x)
+            {
+                GetComponent<Rigidbody2D>().velocity = new Vector2(10, 30);
+            }
+            else
+            {
+                GetComponent<Rigidbody2D>().velocity = new Vector2(-10, 30);
+            }
+
+            //Déclenche son de mort
+            sourceAudio.PlayOneShot(sonMort, 1f); //Joue le clip qui se trouve dans la variable sonMort
+
+            //Partie terminée enregistrée
+            partieTerminee = true;
+
+            //Fin de la partie, reload la scene
+            Invoke("Recommencer", 2f);
         }
 
         //Si l'ennemi est touché et on attaque alors l'ennemi mort sinon le personnage est mort, le jeu recommence
         else if (collision.gameObject.tag == "Ennemi")
         {
-            if (attaque == true)
+            if (attaquePossible == true)
             {
                 Destroy(collision.gameObject);
             }
@@ -134,12 +179,12 @@ public class ControlerPersonnage : MonoBehaviour
     //Recommençer la partie
     void Recommencer()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("Megaman");
     }
 
     //Annule l'attaque
     void AnnuleAttaque()
     {
-        attaque = false;
+        attaquePossible = true;
     }
 }

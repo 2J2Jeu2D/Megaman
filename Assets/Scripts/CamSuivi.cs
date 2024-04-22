@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GestionCam : MonoBehaviour
+public class CamSuivi : MonoBehaviour
 {
+    public GameObject CibleSuivre;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,6 +15,8 @@ public class GestionCam : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Vector3 positionActuelle = transform.position;
+        positionActuelle.x = CibleSuivre.transform.position.x;
+        transform.position = positionActuelle;
     }
 }

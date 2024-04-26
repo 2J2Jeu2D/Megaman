@@ -132,6 +132,12 @@ public class ControlerPersonnage : MonoBehaviour
             Invoke ("Recommencer", 2f);
         }
 
+        //Scène victoire est activée quand le personnage touche l'objet trophée
+        if (collision.gameObject.name == "trophee")
+        {
+            SceneManager.LoadScene("finaleGagne");
+        }
+
         //Activation de l'animation mort au contact avec un ennemi
         if (collision.gameObject.name == "Abeille")
         {
@@ -176,10 +182,24 @@ public class ControlerPersonnage : MonoBehaviour
        
         
     }
+
+    //Si le Megaman tombe dans le vide, il meurt et la partie recommence
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.name == "Vide")
+        {
+            //Déclenche l'animation de mort
+            GetComponent<Animator>().SetBool("mort", true);
+
+            //Recommence la partie
+            Invoke("Recommencer", 2f);
+        }
+    }
+
     //Recommençer la partie
     void Recommencer()
     {
-        SceneManager.LoadScene("Megaman");
+        SceneManager.LoadScene("finaleMort");
     }
 
     //Annule l'attaque

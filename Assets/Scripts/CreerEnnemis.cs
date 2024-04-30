@@ -22,14 +22,16 @@ public class CreerEnnemis : MonoBehaviour
         if (personnage.transform.position.x > limiteGauche && personnage.transform.position.x < limiteDroite)
         {
             //Créer une nouvelle roue
-            Instantiate(ennemiACreer, new Vector3(personnage.transform.position.x + 10, 0, 0), Quaternion.identity);
+            GameObject gameObject = Instantiate(ennemiACreer);
 
             //Acitivez le clone
             ennemiACreer.SetActive(true);
 
             //Positionnez le clone avec une position Y: en haut de la scène
+            gameObject.transform.position = new Vector3(Random.Range(limiteGauche, limiteDroite), 10, 0);
 
             //Position aléatoire en X
+            gameObject.transform.position = new Vector3(Random.Range(limiteGauche, limiteDroite), 10, 0);
         }
     }
 }

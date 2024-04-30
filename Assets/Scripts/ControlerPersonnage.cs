@@ -10,10 +10,13 @@ public class ControlerPersonnage : MonoBehaviour
     public float vitesseY; //vitesse verticale 
     public float vitesseSaut; //vitesse de saut désirée
 
+    public GameObject BalleOriginale; // balle originale
+
     public bool attaquePossible; //variable pour l'attaque
 
     // Déclaration de la variable public de l’objet son
     public AudioClip sonMort;
+    public AudioClip sonArme; // son arme
 
     AudioSource sourceAudio; //Audio
 
@@ -95,6 +98,44 @@ public class ControlerPersonnage : MonoBehaviour
             vitesseX = vitesseX + 5f;
         }
 
+        if (Input.GetKeyDown(KeyCode.Return) && GetComponent<Animator>().GetBool("saute") == false && GetComponent<Animator>().GetBool("attaque") == false)
+        {
+            // Déclenche l'animation de tir
+            GetComponent<Animator>().SetBool("tireBalle", true);
+            // Crée une balle à la position du personnage
+            GameObject balleClone = Instantiate(BalleOriginale);
+            //Active la balle
+            balleClone.SetActive(true);
+            // Joue le son de tir
+            sourceAudio.PlayOneShot(sonArme, 1f);
+            // Si le personnage regarde vers la droite, la balle se déplace vers la droite
+            if (GetComponent<SpriteRenderer>().flipX == false)
+            {
+                balleClone.transform.position = transform.position + new Vector3(.6f, 1);
+                balleClone.GetComponent<Rigidbody2D>().velocity = new Vector2(25, 0);
+            }
+            else
+            {
+                balleClone.transform.position = transform.position + new Vector3(-.6f, 1);
+                balleClone.GetComponent<Rigidbody2D>().velocity = new Vector2(-25, 0);
+            }
+
+        }
+        else if (Input.GetKeyUp((KeyCode.Return)))
+        {
+            GetComponent<Animator>().SetBool("tireBalle", false);
+        }
+
+        // Si le personnage peut attaquer, on ajuste la vélocité X
+        if (attaquePossible == false && vitesseX <= vitesseXMax)
+        {
+            vitesseX = vitesseX + 5f;
+        }
+
+
+        // On ajuste la vélocité du personnage en lui attribuant la valeur de la variable locale
+        GetComponent<Rigidbody2D>().velocity = new Vector2(vitesseX, vitesseY);
+
 
     }
 
@@ -120,6 +161,10 @@ public class ControlerPersonnage : MonoBehaviour
             else
             {
                 GetComponent<Rigidbody2D>().velocity = new Vector2(-10, 30);
+            } 
+            if (collision.gameObject.tag == "Ennemis")
+            {
+                Destroy(collision.gameObject); //Détruit l'objet
             }
 
             //Déclenche son de mort

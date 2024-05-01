@@ -149,9 +149,10 @@ public class ControlerPersonnage : MonoBehaviour
         }
 
         //Activation de l'animation mort au contact avec un ennemi
-        if (collision.gameObject.name == "RoueDentelee")
+        if(collision.gameObject.tag == "Ennemis")
         {
             GetComponent<Animator>().SetBool("mort", true);
+            Destroy(collision.gameObject); //Détruit l'objet
 
             //Désactive les contrôles du personnage lorsqu'il est mort
             if (transform.position.x > collision.transform.position.x)
@@ -162,10 +163,6 @@ public class ControlerPersonnage : MonoBehaviour
             {
                 GetComponent<Rigidbody2D>().velocity = new Vector2(-10, 30);
             } 
-            if (collision.gameObject.tag == "Ennemis")
-            {
-                Destroy(collision.gameObject); //Détruit l'objet
-            }
 
             //Déclenche son de mort
             sourceAudio.PlayOneShot(sonMort, 1f); //Joue le clip qui se trouve dans la variable sonMort
@@ -210,16 +207,22 @@ public class ControlerPersonnage : MonoBehaviour
         }
 
         //Si l'ennemi est touché et on attaque alors l'ennemi mort sinon le personnage est mort, le jeu recommence
-        else if (collision.gameObject.tag == "Ennemi")
+        else if (collision.gameObject.tag == "Ennemis")
         {
             if (attaquePossible == true)
             {
+                //animation explosion de l'ennemi joue
+                collision.gameObject.GetComponent<Animator>().SetBool("explosion", true);
                 Destroy(collision.gameObject);
             }
             else
             {
                 GetComponent<Animator>().SetBool("mort", true);
                 sourceAudio.PlayOneShot(sonMort, 1f); //Joue le clip qui se trouve dans la variable sonMort
+                //le personnage ne peut plus bouger
+                GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                //il ne peut plus shooter
+                GetComponent<Animator>().SetBool("tireBalle", false);
                 Invoke("Recommencer", 2f);
             }
         }

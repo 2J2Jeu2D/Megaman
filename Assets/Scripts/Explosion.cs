@@ -39,6 +39,9 @@ public class Explosion : MonoBehaviour
             //si le personnage est touché alors active l'animation de l'objet et détruit le
             GetComponent<Animator>().enabled = true;
             Destroy(gameObject, 0.1f);
+
+            //Déclence l'animation d'explosion
+            GetComponent<Animator>().SetBool("explosion", true);
         }
     }
 }

@@ -28,10 +28,8 @@ public class CreerEnnemis : MonoBehaviour
             ennemiACreer.SetActive(true);
 
             //Positionnez le clone avec une position Y: en haut de la scène
-            gameObject.transform.position = new Vector3(Random.Range(limiteGauche, limiteDroite), 10, 0);
+            gameObject.transform.position = new Vector3(Random.Range(personnage.transform.position.x - 8f, personnage.transform.position.x + 8f), 10, 0);
 
-            //Position aléatoire en X
-            gameObject.transform.position = new Vector3(Random.Range(limiteGauche, limiteDroite), 10, 0);
         }
     }
 }

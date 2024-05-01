@@ -26,7 +26,7 @@ public class ControleBalle : MonoBehaviour
         if (collision.gameObject.tag == "Ennemis")
         {
             GetComponent<Rigidbody2D>().angularVelocity = 0;
-            Destroy(collision.gameObject); // Destroy the enemy
+            Destroy(collision.gameObject); // Détruit l'ennemi
             Invoke("Detruire", 0.5f);
         }
     }
@@ -38,14 +38,14 @@ public class ControleBalle : MonoBehaviour
         if (collision.gameObject.tag == "Ennemis")
         {
             GetComponent<Rigidbody2D>().angularVelocity = 0;
-            if (collision.gameObject.transform.parent != null) // Check if the game object has a parent
+            if (collision.gameObject.transform.parent != null) // Check si le parent existe
             {
                 parent = collision.gameObject.transform.parent.gameObject;
-                Invoke("DetruireParent", 0.5f); // Destroy the parent (the game object itself is destroyed when the parent is destroyed
+                Invoke("DetruireParent", 0.5f); // Détruire le parent
             }
             else
             {
-                Destroy(collision.gameObject); // Destroy the game object itself if it has no parent
+                Destroy(collision.gameObject); // Détruire l'ennemi
             }
         }
     }
